@@ -1049,6 +1049,9 @@ class MeshService : Service(), Logging {
                 // Generate our own hopsAway, comparing hopStart to hopLimit.
                 if (packet.hopStart != 0 && packet.hopLimit <= packet.hopStart) {
                     it.hopsAway = packet.hopStart - packet.hopLimit
+                } else {
+                    //store unknown specifically
+                    it.hopsAway = -1
                 }
             }
             handleReceivedData(packet)
