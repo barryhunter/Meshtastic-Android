@@ -25,7 +25,12 @@ fun signalInfo(
     } else {
         buildList {
             if (nodeInfo.channel > 0) add("ch:${nodeInfo.channel}")
-            if (nodeInfo.hopsAway == 0) {
+            if (nodeInfo.hopsAway == -1) {
+                add("Hops Away: ?")
+                if (nodeInfo.snr < 100F && nodeInfo.rssi < 0) {
+                    add("(RSSI: %d SNR: %.1f)".format(nodeInfo.rssi, nodeInfo.snr))
+                }
+            } else if (nodeInfo.hopsAway == 0) {
                 if (nodeInfo.snr < 100F && nodeInfo.rssi < 0) {
                     add("RSSI: %d SNR: %.1f".format(nodeInfo.rssi, nodeInfo.snr))
                 }
