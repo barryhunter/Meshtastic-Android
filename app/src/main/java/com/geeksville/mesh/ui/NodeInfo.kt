@@ -17,6 +17,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
@@ -51,6 +52,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import com.geeksville.mesh.ConfigProtos
+import com.geeksville.mesh.ConfigProtos.Config.DeviceConfig
 import com.geeksville.mesh.MeshProtos
 import com.geeksville.mesh.NodeInfo
 import com.geeksville.mesh.R
@@ -72,6 +74,7 @@ fun NodeInfo(
     chipClicked: () -> Unit = {},
     blinking: Boolean = false,
     expanded: Boolean = false,
+    currentTimeMillis: Long,
 ) {
     val unknownShortName = stringResource(id = R.string.unknown_node_short_name)
     val unknownLongName = stringResource(id = R.string.unknown_username)
@@ -128,9 +131,9 @@ fun NodeInfo(
                     ) {
                         Chip(
                             modifier = Modifier
-                                .width(72.dp)
+                                .width(IntrinsicSize.Min)
                                 .padding(end = 8.dp)
-                                .defaultMinSize(minHeight = 32.dp),
+                                .defaultMinSize(minHeight = 32.dp, minWidth = 72.dp),
                             colors = ChipDefaults.chipColors(
                                 backgroundColor = Color(nodeColor),
                                 contentColor = Color(textColor)
@@ -156,7 +159,8 @@ fun NodeInfo(
                         )
 
                         LastHeardInfo(
-                            lastHeard = thatNodeInfo.lastHeard
+                            lastHeard = thatNodeInfo.lastHeard,
+                            currentTimeMillis = currentTimeMillis
                         )
                     }
                     Row(
@@ -249,6 +253,13 @@ fun NodeInfo(
                                     style = style,
                                 )
                             }
+                            val role = thatNodeInfo.user?.role
+                            role?.let {
+                                Text(
+                                    text = DeviceConfig.Role.forNumber(it).name,
+                                    fontSize = MaterialTheme.typography.button.fontSize
+                                )
+                            }
                             val nodeId = thatNodeInfo.user?.id
                             if (nodeId != null) {
                                 Text(text = nodeId, fontSize = MaterialTheme.typography.button.fontSize)
@@ -272,7 +283,8 @@ fun NodeInfoSimplePreview() {
             thatNodeInfo = thatNodeInfo,
             1,
             0,
-            true
+            true,
+            currentTimeMillis = System.currentTimeMillis()
         )
     }
 }
@@ -299,7 +311,8 @@ fun NodeInfoPreview(
                 gpsFormat = 0,
                 distanceUnits = 1,
                 tempInFahrenheit = true,
-                expanded = false
+                expanded = false,
+                currentTimeMillis = System.currentTimeMillis()
             )
             Text(
                 text = "Details Shown",
@@ -311,7 +324,8 @@ fun NodeInfoPreview(
                 gpsFormat = 0,
                 distanceUnits = 1,
                 tempInFahrenheit = true,
-                expanded = true
+                expanded = true,
+                currentTimeMillis = System.currentTimeMillis()
             )
         }
     }
